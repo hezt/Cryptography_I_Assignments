@@ -18,7 +18,7 @@ def strxor(a, b):
     if len(a) > len(b):
         return ''.join([chr(ord(x) ^ ord(y)) for (x, y) in zip(a[:len(b)], b)])
     else:
-        return ''.joiin([chr(ord(x) ^ ord(y)) for (x, y) in zip(a, b[:len(a)])])
+        return ''.join([chr(ord(x) ^ ord(y)) for (x, y) in zip(a, b[:len(a)])])
 
 
 def random(size=16):
@@ -43,12 +43,30 @@ def recoverXor(ct1_hex, ct2_hex):
 
 def decrypt():
     random_key = {}
-    # recovered = []
+    recovered = [["" for i in range(len(MSGS))] for i in range(len(MSGS))]
     m_len = len(MSGS) - 1
-    # for i in range(len(MSGS) - 2):
-        # for j in range(m_len):
-            # r = recoverXor(MSGS[i], MSGS[i + j + 1])
-
+    for i in range(len(MSGS) - 1):
+        for j in range(m_len):
+            r = recoverXor(MSGS[i], MSGS[i + j + 1])
+            recovered[i][j] = r
+            recovered[j][i] = r    
+        m_len -= 1
+    for i in range(len(recovered)):
+        byte_loc = 0
+        while 1:
+            alphabet_times= 0
+            null_times = 0
+            for j in range(len(recovered[i])):
+                if len(recovered[i][j]) > byte_loc:
+                    char_ascii = ord(recovered[i][j][byte_loc])
+                   if (char_ascii >= 0x41 and char_ascii <= 0x5A) or (char_ascii >= 0x61 and char_ascii <= 0x7A):
+                        alphabet_times += 1
+                else:
+                    null_times += 1
+            if null_times == len(recovered[i]):
+                break
+            if alphabet_times >= 7:
+                
 
 
 def main():
